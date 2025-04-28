@@ -19,7 +19,9 @@ import android.opengl.Visibility
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.example.md46_fragments.Fragments.DetailsFullscreenFragment
 
 class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
     private val requestPermissionLauncher =
@@ -122,14 +124,24 @@ class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
                 val path = cursor.getString(dataColumn)
-                Log.d("GalleryImage", "ID: $id, Path: $path")
                 listOfAllImages.add(GalleryImage(ContentUris.withAppendedId(collection, id), path))
             }
         }
     }
 
-    override fun OnClick() {
-        TODO("Not yet implemented")
+    override fun OnClick(image: GalleryImage) {
+        val fragment = DetailsFullscreenFragment().apply {
+            arguments = Bundle().apply {
+                putString("uri", image.link.toString())
+                putString("description", image.description)
+            }
+        }
+
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun OnLongClick(): Boolean {

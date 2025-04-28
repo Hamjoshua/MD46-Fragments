@@ -31,7 +31,7 @@ class ImageRecyclerView(val clickHandler: GalleryImageClickHandler,
         galleryImageEntity.setImage(holder.binding.rImage)
 
         holder.binding.rImage.setOnClickListener{
-            clickHandler.OnClick()
+            clickHandler.OnClick(galleryImageEntity)
         }
 
         holder.binding.rImage.setOnLongClickListener{
@@ -41,7 +41,7 @@ class ImageRecyclerView(val clickHandler: GalleryImageClickHandler,
 }
 
 interface GalleryImageClickHandler{
-    abstract fun OnClick()
+    abstract fun OnClick(image: GalleryImage)
 
     abstract fun OnLongClick() : Boolean
 }
