@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.databinding.RViewBinding
 
-class ImageRecyclerView(val clickHandler: GalleryImageClickHandler) : RecyclerView.Adapter<ImageRecyclerView.ImageViewHolder>() {
-    var data : List<GalleryImage> = emptyList()
+class ImageRecyclerView(val clickHandler: GalleryImageClickHandler,
+                        var data : MutableList<GalleryImage>) : RecyclerView.Adapter<ImageRecyclerView.ImageViewHolder>() {
+
 
     class ImageViewHolder(val binding : RViewBinding) : RecyclerView.ViewHolder(binding.root){
 
