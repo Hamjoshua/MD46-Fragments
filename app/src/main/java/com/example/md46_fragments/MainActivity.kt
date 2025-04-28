@@ -6,89 +6,125 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.databinding.ActivityMainBinding
-
+import android.Manifest
+import android.content.ContentUris
+import android.opengl.Visibility
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.core.view.isVisible
 
 class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 123
-    }
-    private var listOfAllImages : MutableList<GalleryImage> = arrayListOf()
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                turnPermissionWarning(false)
+                // Разрешение получено - загружаем изображения
+                loadImages()
+            } else {
+                turnPermissionWarning(true)
+            }
+        }
+
+    private var listOfAllImages: MutableList<GalleryImage> = arrayListOf()
 
     private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
-        requestPermission()
-        getAllShownImagesPath(this)
+
+        turnPermissionWarning(false)
         initGallery()
+        checkAndRequestPermission()
     }
 
+    private fun checkAndRequestPermission() {
+        val permission =
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                -> Manifest.permission.READ_MEDIA_IMAGES
 
+                else -> Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Разрешение уже есть - загружаем изображения
+                loadImages()
+            }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this, permission
+            ) -> {
+                // Показываем объяснение перед запросом
+                requestPermissionLauncher.launch(permission)
+            }
+
+            else -> {
+                // Просто запрашиваем разрешение
+                requestPermissionLauncher.launch(permission)
+            }
+        }
+    }
+
+    private fun turnPermissionWarning(mode: Boolean){
+        binding.permissionDeniedTxt.isVisible = mode
+    }
 
     private fun initGallery() {
         binding.rList.adapter = ImageRecyclerView(this, listOfAllImages)
         binding.rList.layoutManager = GridLayoutManager(this, 3)
     }
 
-    private fun getAllShownImagesPath(activity: Activity) {
-        val uri: Uri
-        val cursor: Cursor?
-        val column_index_data: Int
-        val column_index_folder_name: Int
+    private fun loadImages() {
+        listOfAllImages.clear()
+        getAllShownImagesPath()
+        binding.rList.adapter?.notifyDataSetChanged()
+    }
 
-        var absolutePathOfImage: String? = null
-        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.Images.Media._ID,
+    private fun getAllShownImagesPath() {
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
             MediaStore.Images.Media.MIME_TYPE,
-            MediaStore.Images.Media.DATA)
-        cursor = activity.contentResolver.query(
-            uri, projection, null,
-            null, null
+            MediaStore.Images.Media.DATA
         )
-        column_index_data = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data)
-            listOfAllImages.add(
-                GalleryImage(
-                    absolutePathOfImage,
-                    ""
-                )
-            )
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
-    }
+        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
-    private fun requestPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED -> {
-                ActivityCompat.requestPermissions(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    PERMISSION_REQUEST_CODE
-                )
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            null,
+            null,
+            sortOrder
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(idColumn)
+                val path = cursor.getString(dataColumn)
+                Log.d("GalleryImage", "ID: $id, Path: $path")
+                listOfAllImages.add(GalleryImage(ContentUris.withAppendedId(collection, id), path))
             }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == PERMISSION_REQUEST_CODE){
-
         }
     }
 

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MD46-Fragments</string>
+    <string name="permission_warning">Приложению нужен доступ к галерее для полноценной работы. Однако, мы уважаем ваш выбор.\n\nМожете поменять разрешения в настройках приложения, если передумаете.</string>
 </resources>

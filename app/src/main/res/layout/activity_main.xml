@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:text="@string/permission_warning"
+        android:id="@+id/permissionDeniedTxt"
+        android:padding="10sp"
+        android:textSize="25sp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+    </TextView>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/r_list"
         android:layout_width="match_parent"
