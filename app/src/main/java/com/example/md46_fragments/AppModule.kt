@@ -27,13 +27,14 @@ object DatabaseModule {
         .allowMainThreadQueries()
         .fallbackToDestructiveMigration()
         .build()
+
     @Singleton
     @Provides
-    fun provideUserDao(db: GalleryImageDatabase) = db.giDao()
+    fun provideGalleryImageDao(db: GalleryImageDatabase) = db.giDao()
 
     @Provides
     @Singleton
-    fun provideGiRepository(giDao: GalleryImageDAO): GalleryImageRepo {
+    fun provideGalleryImageRepository(giDao: GalleryImageDAO): GalleryImageRepo {
         return GalleryImageRepo(giDao)
     }
 }

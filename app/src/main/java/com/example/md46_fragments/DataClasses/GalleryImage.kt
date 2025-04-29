@@ -15,7 +15,7 @@ data class GalleryImage(
 ){
     fun setImage(imageView: ImageView){
         Glide.with(imageView.context)
-            .load(Uri.parse(link))
+            .load(link)
             .into(imageView)
     }
 }

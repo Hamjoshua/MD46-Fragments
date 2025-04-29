@@ -1,35 +1,26 @@
 package com.example.md46_fragments
 
-import android.app.Activity
+import android.Manifest
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.md46_fragments.DataClasses.GalleryImage
-import com.example.md46_fragments.databinding.ActivityMainBinding
-import android.Manifest
-import android.content.ContentUris
-import android.opengl.Visibility
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import com.example.md46_fragments.Fragments.ChangeDetailsFragment
 import com.example.md46_fragments.Fragments.DetailsFullscreenFragment
+import com.example.md46_fragments.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
     GalleryImageClickHandler, ChangeDetailsFragment.DescriptionChangeListener {
-    private val viewModel: GIViewModel by viewModels<GIViewModel>()
+    private val viewModel: GIViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -93,7 +84,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun initGallery() {
-        binding.rList.adapter = ImageRecyclerView(this, viewModel.listOfAllImages.toMutableList())
+        binding.rList.adapter = ImageRecyclerView(this, viewModel.listOfAllImages.value!!.toMutableList())
         binding.rList.layoutManager = GridLayoutManager(this, 3)
     }
 
@@ -105,7 +96,7 @@ class MainActivity : AppCompatActivity(),
     override fun onClick(image: GalleryImage) {
         val fragment = DetailsFullscreenFragment().apply {
             arguments = Bundle().apply {
-                putString("uri", image.link.toString())
+                putString("uri", image.link)
                 putString("description", image.description)
             }
         }
@@ -117,11 +108,11 @@ class MainActivity : AppCompatActivity(),
             .commit()
     }
 
-    override fun onLongClick(description: String, id: Int): Boolean {
+    override fun onLongClick(description: String, imageId: Int): Boolean {
         val dialog = ChangeDetailsFragment().apply {
             arguments = Bundle().apply {
                 putString("description", description)
-                putInt("imageId", id)
+                putInt("imageId", imageId)
             }
         }
         dialog.show(supportFragmentManager, "DETAILS")
@@ -130,6 +121,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onChange(newDescription: String, imageId: Int) {
-        viewModel.listOfAllImages[imageId].description = newDescription
+        viewModel.updateGalleryImage(newDescription, imageId)
     }
 }

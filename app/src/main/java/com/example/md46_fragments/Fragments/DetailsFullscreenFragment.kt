@@ -33,7 +33,7 @@ class DetailsFullscreenFragment : Fragment() {
         val description = arguments?.getString("description") ?: ""
 
         Glide.with(this)
-            .load(Uri.parse(imageLink))
+            .load(imageLink)
             .into(binding.actionImage)
 
         binding.fullscreenContent.text = description

@@ -4,33 +4,45 @@ import android.content.ContentUris
 import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.Db.GalleryImageRepo
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
 class GIViewModel @Inject constructor(
-    private val giRepository: GalleryImageRepo
+    private val giRepository: GalleryImageRepo,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private var _listOfAllImages: MutableLiveData<List<GalleryImage>> =
         MutableLiveData<List<GalleryImage>>()
 
-    val listOfAllImages: List<GalleryImage> = _listOfAllImages.value!!
+    val listOfAllImages: LiveData<List<GalleryImage>> = _listOfAllImages
 
     fun loadImages(context: Context) {
         _listOfAllImages.value = giRepository.getAllGi()
 
         if (_listOfAllImages.value!!.isEmpty()) {
-            getAllShownImagesPath(context)
+            Log.d("ViewModel", "DB is empty")
+            getAllShownImagesPath()
             _listOfAllImages.value = giRepository.getAllGi()
+        }
+        else{
+            Log.d("ViewModel", "DB is not empty, list has values")
         }
     }
 
-    private fun getAllShownImagesPath(context: Context) {
+    fun updateGalleryImage(newDescription: String, imageId: Int){
+        _listOfAllImages.value!![imageId].description = newDescription
+    }
+
+    private fun getAllShownImagesPath() {
         val projection = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.MIME_TYPE,
