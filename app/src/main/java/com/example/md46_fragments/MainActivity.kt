@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.Fragments.ChangeDetailsFragment
@@ -20,8 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
-    GalleryImageClickHandler, ChangeDetailsFragment.DescriptionChangeListener {
-    private val viewModel: GIViewModel by viewModels()
+    GalleryImageClickHandler {
+    private val navController = findNavController(R.id.nav_host_fragment)
     private lateinit var binding: ActivityMainBinding
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -30,13 +31,11 @@ class MainActivity : AppCompatActivity(),
             if (isGranted) {
                 turnPermissionWarning(false)
                 // Разрешение получено - загружаем изображения
-                loadImages()
+
             } else {
                 turnPermissionWarning(true)
             }
         }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +44,6 @@ class MainActivity : AppCompatActivity(),
 
         turnPermissionWarning(false)
         checkAndRequestPermission()
-        initGallery()
     }
 
     private fun checkAndRequestPermission() {
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity(),
                 permission
             ) == PackageManager.PERMISSION_GRANTED -> {
                 // Разрешение уже есть - загружаем изображения
-                loadImages()
+
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
@@ -84,29 +82,14 @@ class MainActivity : AppCompatActivity(),
         binding.permissionDeniedTxt.isVisible = mode
     }
 
-    private fun initGallery() {
-        binding.rList.adapter = ImageRecyclerView(this, viewModel.listOfAllImages.value!!.toMutableList())
-        binding.rList.layoutManager = GridLayoutManager(this, 3)
-    }
 
-    private fun loadImages() {
-        viewModel.loadImages(this)
-        binding.rList.adapter?.notifyDataSetChanged()
-    }
 
     override fun onClick(image: GalleryImage) {
-        val fragment = DetailsFullscreenFragment().apply {
-            arguments = Bundle().apply {
-                putString("uri", image.link)
-                putString("description", image.description)
-            }
+        val bundle = Bundle().apply {
+            image.link to "link"
+            image.description to "description"
         }
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
-            .addToBackStack(null)
-            .commit()
+        navController.navigate(R.id.action_galleryFragment_to_detailsFullscreenFragment, )
     }
 
     override fun onLongClick(description: String, imageId: Int): Boolean {
@@ -119,10 +102,5 @@ class MainActivity : AppCompatActivity(),
         dialog.show(supportFragmentManager, "DETAILS")
 
         return true
-    }
-
-    override fun onChange(newDescription: String, imageId: Int) {
-        viewModel.updateGalleryImage(newDescription, imageId)
-        Toast.makeText(this, "Описание изменено!", Toast.LENGTH_SHORT).show()
     }
 }

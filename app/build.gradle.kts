@@ -45,6 +45,8 @@ kapt {
 }
 
 dependencies {
+    val nav_version = "2.8.9"
+
     implementation("androidx.fragment:fragment-ktx:1.8.6")
 
     implementation("androidx.core:core-ktx:1.15.0")
@@ -57,6 +59,14 @@ dependencies {
     implementation("androidx.room:room-runtime:2.4.1")
     annotationProcessor("androidx.room:room-compiler:2.4.1")
     kapt("androidx.room:room-compiler:2.4.1")
+
+    // navigation
+    implementation("androidx.navigation:navigation-fragment:$nav_version")
+    implementation("androidx.navigation:navigation-ui:$nav_version")
+    // JSON serialization library, works with the Kotlin serialization plugin
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    // navigation module support for Fragments
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
