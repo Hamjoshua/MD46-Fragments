@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/galleryFragment">
+
+    <fragment
+        android:id="@+id/detailsFullscreenFragment"
+        android:name="com.example.md46_fragments.Fragments.DetailsFullscreenFragment"
+        android:label="fragment_details_fullscreen"
+        tools:layout="@layout/fragment_details_fullscreen" >
+        <argument
+            android:name="link"
+            app:argType="string" />
+        <argument android:name="description"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/changeDetailsFragment"
+        android:name="com.example.md46_fragments.Fragments.ChangeDetailsFragment"
+        android:label="ChangeDetailsFragment" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_changeDetailsFragment_to_galleryFragment"
+            app:destination="@id/galleryFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.example.md46_fragments.Fragments.GalleryFragment"
+        android:label="fragment_gallery"
+        tools:layout="@layout/fragment_gallery" >
+        <action
+            android:id="@+id/action_galleryFragment_to_detailsFullscreenFragment"
+            app:destination="@id/detailsFullscreenFragment" />
+        <action
+            android:id="@+id/action_galleryFragment_to_changeDetailsFragment"
+            app:destination="@id/changeDetailsFragment" />
+    </fragment>
+</navigation>

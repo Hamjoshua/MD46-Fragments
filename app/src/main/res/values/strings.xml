@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">MD46-Fragments</string>
+    <string name="permission_warning">Приложению нужен доступ к галерее для полноценной работы. Однако, мы уважаем ваш выбор.\n\nМожете поменять разрешения в настройках приложения, если передумаете.</string>
+    <string name="back_btn">Назад</string>
+    <string name="dummy_content">Пример долгого и большого описания</string>
+    <string name="save_dialog">Сохранить</string>
+    <string name="cancel_dialog">Отмена</string>
+    <string name="description_dialog_hint">Введите описание</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
