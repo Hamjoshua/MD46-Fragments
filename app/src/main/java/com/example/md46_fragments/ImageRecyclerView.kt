@@ -31,17 +31,17 @@ class ImageRecyclerView(val clickHandler: GalleryImageClickHandler,
         galleryImageEntity.setImage(holder.binding.rImage)
 
         holder.binding.rImage.setOnClickListener{
-            clickHandler.OnClick(galleryImageEntity)
+            clickHandler.onClick(galleryImageEntity)
         }
 
         holder.binding.rImage.setOnLongClickListener{
-            clickHandler.OnLongClick()
+            clickHandler.onLongClick(galleryImageEntity.description, position)
         }
     }
 }
 
 interface GalleryImageClickHandler{
-    abstract fun OnClick(image: GalleryImage)
+    abstract fun onClick(image: GalleryImage)
 
-    abstract fun OnLongClick() : Boolean
+    abstract fun onLongClick(description: String, imageId: Int) : Boolean
 }

@@ -6,7 +6,7 @@ import com.bumptech.glide.Glide
 
 data class GalleryImage(
     val link : Uri,
-    val description: String
+    var description: String
 ){
     fun setImage(imageView: ImageView){
         Glide.with(imageView.context)

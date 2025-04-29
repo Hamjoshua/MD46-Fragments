@@ -21,9 +21,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.example.md46_fragments.Fragments.ChangeDetailsFragment
 import com.example.md46_fragments.Fragments.DetailsFullscreenFragment
 
-class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
+class MainActivity : AppCompatActivity(),
+    GalleryImageClickHandler, ChangeDetailsFragment.DescriptionChangeListener {
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
         }
     }
 
-    private fun turnPermissionWarning(mode: Boolean){
+    private fun turnPermissionWarning(mode: Boolean) {
         binding.permissionDeniedTxt.isVisible = mode
     }
 
@@ -129,7 +131,7 @@ class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
         }
     }
 
-    override fun OnClick(image: GalleryImage) {
+    override fun onClick(image: GalleryImage) {
         val fragment = DetailsFullscreenFragment().apply {
             arguments = Bundle().apply {
                 putString("uri", image.link.toString())
@@ -144,7 +146,19 @@ class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
             .commit()
     }
 
-    override fun OnLongClick(): Boolean {
-        TODO("Not yet implemented")
+    override fun onLongClick(description: String, id: Int): Boolean {
+        val dialog = ChangeDetailsFragment().apply {
+            arguments = Bundle().apply {
+                putString("description", description)
+                putInt("imageId", id)
+            }
+        }
+        dialog.show(supportFragmentManager, "DETAILS")
+
+        return true
+    }
+
+    override fun onChange(newDescription: String, imageId: Int) {
+        listOfAllImages[imageId].description = newDescription
     }
 }
