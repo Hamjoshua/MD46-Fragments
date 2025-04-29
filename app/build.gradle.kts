@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -67,6 +68,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     // navigation module support for Fragments
     implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.appcompat:appcompat:1.7.0")

@@ -12,6 +12,9 @@ import com.example.md46_fragments.databinding.DialogEditTextBinding
 class ChangeDetailsFragment : DialogFragment() {
     private lateinit var binding: DialogEditTextBinding
     private lateinit var listener : DescriptionChangeListener
+
+    private val id : Int? = arguments?.getInt("id")
+    private val description : String? = arguments?.getString("description")
     interface DescriptionChangeListener{
         fun onChange(newDescription: String, imageId: Int)
     }
@@ -22,8 +25,6 @@ class ChangeDetailsFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val description = arguments?.getString("description")
-        val imageId = arguments?.getInt("imageId")
         binding = DialogEditTextBinding.inflate(layoutInflater)
 
         binding.editDescriptionTxt.setText(description)
@@ -33,7 +34,7 @@ class ChangeDetailsFragment : DialogFragment() {
             .setView(binding.root)
             .setPositiveButton(getString(R.string.save_dialog)) { _, _ ->
                 listener.onChange(binding.editDescriptionTxt.text.toString(),
-                    imageId!!)
+                    id!!)
             }
             .setNegativeButton(getString(R.string.cancel_dialog)) { _,_ -> }
             .create()

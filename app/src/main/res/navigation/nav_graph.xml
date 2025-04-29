@@ -13,7 +13,8 @@
         <argument
             android:name="link"
             app:argType="string" />
-        <argument android:name="description" />
+        <argument android:name="description"
+            app:argType="string" />
     </fragment>
     <dialog
         android:id="@+id/changeDetailsFragment"

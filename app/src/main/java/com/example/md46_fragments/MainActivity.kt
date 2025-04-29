@@ -11,18 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.Fragments.ChangeDetailsFragment
 import com.example.md46_fragments.Fragments.DetailsFullscreenFragment
+import com.example.md46_fragments.Fragments.GalleryFragment
+import com.example.md46_fragments.Fragments.GalleryFragmentDirections
 import com.example.md46_fragments.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(),
-    GalleryImageClickHandler {
-    private val navController = findNavController(R.id.nav_host_fragment)
+class MainActivity : AppCompatActivity()
+     {
     private lateinit var binding: ActivityMainBinding
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -84,23 +87,5 @@ class MainActivity : AppCompatActivity(),
 
 
 
-    override fun onClick(image: GalleryImage) {
-        val bundle = Bundle().apply {
-            image.link to "link"
-            image.description to "description"
-        }
-        navController.navigate(R.id.action_galleryFragment_to_detailsFullscreenFragment, )
-    }
 
-    override fun onLongClick(description: String, imageId: Int): Boolean {
-        val dialog = ChangeDetailsFragment().apply {
-            arguments = Bundle().apply {
-                putString("description", description)
-                putInt("imageId", imageId)
-            }
-        }
-        dialog.show(supportFragmentManager, "DETAILS")
-
-        return true
-    }
 }

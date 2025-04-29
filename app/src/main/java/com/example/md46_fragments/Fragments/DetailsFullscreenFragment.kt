@@ -21,23 +21,25 @@ class DetailsFullscreenFragment : Fragment() {
     private var _binding: FragmentDetailsFullscreenBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
+        Bundle?
+    ): View {
         _binding = FragmentDetailsFullscreenBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val link: String? = arguments?.getString("link")
+        val description: String? = arguments?.getString("description")
         super.onViewCreated(view, savedInstanceState)
 
-        val imageLink = arguments?.getString("uri") ?: return
-        val description = arguments?.getString("description") ?: ""
-
         Glide.with(this)
-            .load(imageLink)
+            .load(link)
             .into(binding.actionImage)
 
         binding.fullscreenContent.text = description
-        binding.dummyButton.setOnClickListener{
+        binding.dummyButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
