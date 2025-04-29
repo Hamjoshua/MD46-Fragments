@@ -17,7 +17,7 @@ class GalleryImageRepo @Inject constructor(
         giDao.insertGalleryImage(gi)
     }
 
-    fun updateGi(newGi: GalleryImage) {
-        giDao.updateGalleryImage(newGi)
+    fun updateDescriptionOfGi(description: String, id: Int) {
+        giDao.updateDescription(description, id)
     }
 }

@@ -39,7 +39,9 @@ class GIViewModel @Inject constructor(
     }
 
     fun updateGalleryImage(newDescription: String, imageId: Int){
-        _listOfAllImages.value!![imageId].description = newDescription
+        val galleryImage = _listOfAllImages.value!![imageId]
+        galleryImage.description = newDescription
+        giRepository.insertGi(galleryImage)
     }
 
     private fun getAllShownImagesPath() {

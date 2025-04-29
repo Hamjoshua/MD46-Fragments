@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -122,5 +123,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onChange(newDescription: String, imageId: Int) {
         viewModel.updateGalleryImage(newDescription, imageId)
+        Toast.makeText(this, "Описание изменено!", Toast.LENGTH_SHORT).show()
     }
 }

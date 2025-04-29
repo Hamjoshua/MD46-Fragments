@@ -14,6 +14,9 @@ interface GalleryImageDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertGalleryImage(galleryImage: GalleryImage)
 
+    @Query("Update GalleryImages Set description = :description where id = :id")
+    fun updateDescription(description: String, id: Int)
+
     @Update
     fun updateGalleryImage(newGalleryImage: GalleryImage)
 }
