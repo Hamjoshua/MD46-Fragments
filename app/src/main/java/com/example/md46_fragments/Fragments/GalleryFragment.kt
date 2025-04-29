@@ -23,8 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class GalleryFragment : Fragment(), ChangeDetailsFragment.DescriptionChangeListener,
-    GalleryImageClickHandler {
+class GalleryFragment : Fragment(), GalleryImageClickHandler {
     private lateinit var navController: NavController
     private val viewModel: GIViewModel by viewModels()
     private lateinit var binding: FragmentGalleryBinding
@@ -45,8 +44,20 @@ class GalleryFragment : Fragment(), ChangeDetailsFragment.DescriptionChangeListe
             parentFragment as NavHostFragment
         navController = navHostFragment.navController
 
+        setChangeDescriptionListener()
         setupObservers()
         loadImages()
+    }
+
+    private fun setChangeDescriptionListener() {
+        parentFragmentManager.setFragmentResultListener(
+            "edit_description_request",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val newDescription = bundle.getString("description")
+            val id = bundle.getInt("id")
+            changeDescription(newDescription!!, id!!)
+        }
     }
 
     private fun setupObservers() {
@@ -58,22 +69,12 @@ class GalleryFragment : Fragment(), ChangeDetailsFragment.DescriptionChangeListe
         }
     }
 
-    private fun initGallery() {
-        val images = viewModel.listOfAllImages.value!!.toMutableList()
-
-        binding.rList.adapter = ImageRecyclerView(
-            this,
-            images
-        )
-        binding.rList.layoutManager = GridLayoutManager(context, 3)
-    }
-
     private fun loadImages() {
         viewModel.loadImages(requireParentFragment().requireContext())
         binding.rList.adapter?.notifyDataSetChanged()
     }
 
-    override fun onChange(newDescription: String, imageId: Int) {
+    fun changeDescription(newDescription: String, imageId: Int) {
         viewModel.updateGalleryImage(newDescription, imageId)
     }
 
