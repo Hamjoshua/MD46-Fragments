@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.example.md46_fragments.DataClasses.GalleryImageDAO
-import com.example.md46_fragments.Db.DbModule
+import com.example.md46_fragments.Db.GalleryImageDatabase
 import com.example.md46_fragments.Db.GalleryImageRepo
 import dagger.Module
 import dagger.Provides
@@ -22,14 +22,14 @@ object DatabaseModule {
     fun provideUserDatabase(
         @ApplicationContext app: Context
     ) = Room.databaseBuilder(
-        app, DbModule::class.java, "GalleryImageDatabase"
+        app, GalleryImageDatabase::class.java, "GalleryImageDatabase"
     )
         .allowMainThreadQueries()
         .fallbackToDestructiveMigration()
         .build()
     @Singleton
     @Provides
-    fun provideUserDao(db: DbModule) = db.giDao()
+    fun provideUserDao(db: GalleryImageDatabase) = db.giDao()
 
     @Provides
     @Singleton

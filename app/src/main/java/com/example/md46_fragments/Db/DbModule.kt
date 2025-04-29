@@ -6,6 +6,6 @@ import com.example.md46_fragments.DataClasses.GalleryImage
 import com.example.md46_fragments.DataClasses.GalleryImageDAO
 
 @Database(entities = [GalleryImage::class], version = 2, exportSchema = false)
-abstract class DbModule : RoomDatabase() {
+abstract class GalleryImageDatabase : RoomDatabase() {
     abstract fun giDao() : GalleryImageDAO
 }

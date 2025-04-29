@@ -19,13 +19,18 @@ import android.opengl.Visibility
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.example.md46_fragments.Fragments.ChangeDetailsFragment
 import com.example.md46_fragments.Fragments.DetailsFullscreenFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
     GalleryImageClickHandler, ChangeDetailsFragment.DescriptionChangeListener {
+    private val viewModel: GIViewModel by viewModels<GIViewModel>()
+    private lateinit var binding: ActivityMainBinding
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -39,9 +44,7 @@ class MainActivity : AppCompatActivity(),
             }
         }
 
-    private var listOfAllImages: MutableList<GalleryImage> = arrayListOf()
 
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +52,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         turnPermissionWarning(false)
-        initGallery()
         checkAndRequestPermission()
+        initGallery()
     }
 
     private fun checkAndRequestPermission() {
@@ -90,45 +93,13 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun initGallery() {
-        binding.rList.adapter = ImageRecyclerView(this, listOfAllImages)
+        binding.rList.adapter = ImageRecyclerView(this, viewModel.listOfAllImages.toMutableList())
         binding.rList.layoutManager = GridLayoutManager(this, 3)
     }
 
     private fun loadImages() {
-        listOfAllImages.clear()
-        getAllShownImagesPath()
+        viewModel.loadImages(this)
         binding.rList.adapter?.notifyDataSetChanged()
-    }
-
-    private fun getAllShownImagesPath() {
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.MIME_TYPE,
-            MediaStore.Images.Media.DATA
-        )
-        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
-
-        applicationContext.contentResolver.query(
-            collection,
-            projection,
-            null,
-            null,
-            sortOrder
-        )?.use { cursor ->
-            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-
-            while (cursor.moveToNext()) {
-                val id = cursor.getLong(idColumn)
-                val path = cursor.getString(dataColumn)
-                listOfAllImages.add(GalleryImage(ContentUris.withAppendedId(collection, id), path))
-            }
-        }
     }
 
     override fun onClick(image: GalleryImage) {
@@ -159,6 +130,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onChange(newDescription: String, imageId: Int) {
-        listOfAllImages[imageId].description = newDescription
+        viewModel.listOfAllImages[imageId].description = newDescription
     }
 }

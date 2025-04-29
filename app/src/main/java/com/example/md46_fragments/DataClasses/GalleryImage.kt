@@ -9,12 +9,13 @@ import com.bumptech.glide.Glide
 @Entity(tableName = "GalleryImages")
 data class GalleryImage(
     @PrimaryKey(autoGenerate = true)
-    val link : Uri,
+    val id: Int = 0,
+    val link : String,
     var description: String
 ){
     fun setImage(imageView: ImageView){
         Glide.with(imageView.context)
-            .load(link)
+            .load(Uri.parse(link))
             .into(imageView)
     }
 }
