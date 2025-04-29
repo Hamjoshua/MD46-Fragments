@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity(), GalleryImageClickHandler {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .replace(binding.fragmentContainer.id, fragment)
             .addToBackStack(null)
             .commit()
     }
